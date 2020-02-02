@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css?family=Ubuntu&display=swap');
+
+.Container {
+    /* border: solid blue 2px; */
+    display: flex;
+    height: 100vh;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: #54a0ff;
+}
+
+.Current-word {
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 60px;
+    color: #ffffff;
+}
+
+input {
+    color: #ffffff;
+    text-shadow: 0 0 0 #2196f3;
+    background-color: transparent;
+    border: solid red 1px;
+    height: 100px;
+    width: 200px;
+}
+
+input::-moz-focus-inner {
+    border : solid green 3px;
+
+}
+
+input::placeholder {
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 60px;
+    color: #ffffff;
+}
