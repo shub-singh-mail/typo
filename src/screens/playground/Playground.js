@@ -4,51 +4,55 @@ import "./Playground.css";
 
 const Playground = () => {
 
-    useEffect(() => {
-        document.addEventListener('keypress', wordValidator)
-        return () => {
-            document.removeEventListener('keypress')
-        }
-    },[])
-
-    let [lives, setLives] = useState(3)
-    let [currentLevel, setCurrentLevel] = useState(0)
-    let [correctPart, setCorrectPart] = useState('')
-    let [remainingPart, setRemainingPart] = useState(words[currentLevel])
+    let [playerData, setPlayerData] = useState({
+        lives: 3,
+        currentLevel: 0,
+        correct: '',
+        remaining: words[0]
+    })
 
     const wordValidator = props => {
         const { key } = props;
-        const { target } = props;
-        const currentWord = [...words[currentLevel]];
-        if (!lives) {
-        } else if (key !== currentWord[target.value.length - 1]) {
-            setCorrectPart('');
-            setLives(lives - 1);
-            setCurrentLevel(currentLevel + 1);
-            setRemainingPart(words[currentLevel]);
-        } else if(target.value === words[currentLevel]){
-            setCorrectPart('');
-            setRemainingPart('');
-            setCurrentLevel(currentLevel + 1);
-            setRemainingPart(words[currentLevel]);
-        } else {
-            setCorrectPart(target.value);
-            setRemainingPart('');
+        const currentWord = [...words[playerData.currentLevel]];
+        if (playerData.lives) {
+            const currentString = playerData.correct.concat(key);
+
+            if (currentString === words[playerData.currentLevel]) {
+                setPlayerData((prevData) => ({
+                    ...prevData,
+                    correct: '',
+                    remaining: words[prevData.currentLevel + 1],
+                    currentLevel: prevData.currentLevel + 1,
+                }))
+            } else if (key !== currentWord[playerData.correct.length]) {
+                setPlayerData((prevData) => ({
+                    ...prevData,
+                    correct: '',
+                    lives: prevData.lives - 1,
+                    remaining: words[prevData.currentLevel + 1],
+                    currentLevel: prevData.currentLevel + 1,
+                }))
+            } else {
+                setPlayerData((prevData) => ({
+                    ...prevData,
+                    remaining: prevData.remaining.slice(1),
+                    correct: currentString,
+                }))
+            }
         }
     }
 
-    const getRemainingPart = () => {
-        return remainingPart.slice(correctPart.length)
-    }
-
-    const getCorrectPart = () => {
-        return correctPart
-    }
+    useEffect(() => {
+        document.addEventListener('keypress', wordValidator)
+        return () => {
+            document.removeEventListener('keypress', wordValidator)
+        }
+    }, [wordValidator])
 
     return (
         <div className="Container">
-            <h1 className='Current-word'>{getCorrectPart()}</h1>
-            <h1 className=''>{getRemainingPart()}</h1>
+            <h1 className='Current-word'>{playerData.correct}</h1>
+            <h1>{playerData.remaining}</h1>
         </div>
     )
 }
