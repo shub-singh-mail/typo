@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import words from "../../utils/words";
 import "./Playground.css";
 
@@ -11,7 +11,7 @@ const Playground = () => {
         remaining: words[0]
     })
 
-    const wordValidator = props => {
+    const wordValidator = useCallback(props => {
         const { key } = props;
         const currentWord = [...words[playerData.currentLevel]];
         if (playerData.lives) {
@@ -40,11 +40,13 @@ const Playground = () => {
                 }))
             }
         }
-    }
+    },[playerData.lives, playerData.currentLevel, playerData.correct])
 
     useEffect(() => {
+        console.log('connected')
         document.addEventListener('keypress', wordValidator)
         return () => {
+            console.log('removed')
             document.removeEventListener('keypress', wordValidator)
         }
     }, [wordValidator])
