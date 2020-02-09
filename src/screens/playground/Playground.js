@@ -1,61 +1,122 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useReducer } from "react";
 import words from "../../utils/words";
+import Heart from "../../components/heart";
+import Loader from "../../components/loader";
 import "./Playground.css";
+import GameOver from "./GameOver";
+
+const size = 30;
+const strokeWidth = 5;
+const radius = (size - strokeWidth) / 2;
+const initialState = {
+    lives: 3,
+    currentLevel: 0,
+    correct: '',
+    remaining: words[0]
+}
+
+const reducer = (state, action) => {
+    switch (action.type) {
+        case 'Complete':
+            return {
+                ...state,
+                correct: '',
+                remaining: words[state.currentLevel + 1],
+                currentLevel: state.currentLevel + 1,
+            }
+        case 'Incorrect':
+            return {
+                ...state,
+                correct: '',
+                lives: state.lives - 1,
+                remaining: words[state.currentLevel + 1],
+                currentLevel: state.currentLevel + 1,
+            }
+        case 'Correct':
+            return {
+                ...state,
+                remaining: state.remaining.slice(1),
+                correct: action.currentString,
+            }
+        case 'Retry' :
+            return {
+                ...initialState
+            }
+        default :
+            throw new Error()
+    }
+}
 
 const Playground = () => {
 
-    let [playerData, setPlayerData] = useState({
-        lives: 3,
-        currentLevel: 0,
-        correct: '',
-        remaining: words[0]
-    })
+    const [state, dispatch] = useReducer(reducer, initialState)
+    const [animationName, setAnimationName] = useState('countdown-animation')
 
-    const wordValidator = useCallback(props => {
+    const resetLoaderAnimation = () => {
+        setAnimationName('')
+        setTimeout(() => {
+            setAnimationName('countdown-animation')
+        })
+    }
+
+    const wordValidator = useCallback((props) => {
         const { key } = props;
-        const currentWord = [...words[playerData.currentLevel]];
-        if (playerData.lives) {
-            const currentString = playerData.correct.concat(key);
-
-            if (currentString === words[playerData.currentLevel]) {
-                setPlayerData((prevData) => ({
-                    ...prevData,
-                    correct: '',
-                    remaining: words[prevData.currentLevel + 1],
-                    currentLevel: prevData.currentLevel + 1,
-                }))
-            } else if (key !== currentWord[playerData.correct.length]) {
-                setPlayerData((prevData) => ({
-                    ...prevData,
-                    correct: '',
-                    lives: prevData.lives - 1,
-                    remaining: words[prevData.currentLevel + 1],
-                    currentLevel: prevData.currentLevel + 1,
-                }))
+        const currentWord = [...words[state.currentLevel]];
+        if (state.lives) {
+            const currentString = state.correct.concat(key);
+            if (currentString === words[state.currentLevel]) {
+                dispatch({ type: 'Complete' })
+                resetLoaderAnimation()
+            } else if (key !== currentWord[state.correct.length]) {
+                dispatch({ type: 'Incorrect' })
+                resetLoaderAnimation()
             } else {
-                setPlayerData((prevData) => ({
-                    ...prevData,
-                    remaining: prevData.remaining.slice(1),
-                    correct: currentString,
-                }))
+                dispatch({ type: 'Correct', currentString: currentString })
             }
         }
-    },[playerData.lives, playerData.currentLevel, playerData.correct])
+    }, [state.correct, state.lives, state.currentLevel])
+
+    const getHearts = () => Array(state.lives).fill(<Heart />, 0)
+
+    const _onAnimationEnd = () => {
+        dispatch({ type: 'Incorrect' })
+        resetLoaderAnimation()
+    }
 
     useEffect(() => {
-        console.log('connected')
         document.addEventListener('keypress', wordValidator)
         return () => {
-            console.log('removed')
             document.removeEventListener('keypress', wordValidator)
         }
     }, [wordValidator])
 
     return (
-        <div className="Container">
-            <h1 className='Current-word'>{playerData.correct}</h1>
-            <h1>{playerData.remaining}</h1>
-        </div>
+        <>
+            {
+                state.lives ? 
+            <>
+                <div className='Header'>
+                    {getHearts()}
+                </div>
+                <div className="Container">
+                    <h1 className='Current-word'>{state.correct}</h1>
+                    <h1>{state.remaining}</h1>
+                    <Loader
+                        timeInSeconds={words[state.currentLevel].length / 2}
+                        onAnimationEnd={_onAnimationEnd}
+                        resetCounter={animationName}
+                        {...{
+                            size,
+                            radius,
+                            strokeWidth
+                        }}
+                    />
+                </div>
+            </>
+             : 
+             <GameOver onClick={() => dispatch({type : 'Retry'})}/>
+            }
+        </>
     )
 }
 

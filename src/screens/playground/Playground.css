@@ -1,7 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Ubuntu&display=swap');
-
 .Container {
-    /* border: solid blue 2px; */
     display: flex;
     height: 100vh;
     flex-direction: row;
@@ -10,28 +8,32 @@
     background-color: #54a0ff;
 }
 
+.Header {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
 .Current-word {
     font-family: 'Ubuntu', sans-serif;
     font-size: 60px;
     color: #ffffff;
 }
 
-input {
-    color: #ffffff;
-    text-shadow: 0 0 0 #2196f3;
+.circle-background {
+    stroke: transparent;
     background-color: transparent;
-    border: solid red 1px;
-    height: 100px;
-    width: 200px;
 }
 
-input::-moz-focus-inner {
-    border : solid green 3px;
-
+.circle-progress {
+    stroke: black;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
-input::placeholder {
-    font-family: 'Ubuntu', sans-serif;
-    font-size: 60px;
-    color: #ffffff;
+@keyframes countdown-animation {
+    to {
+        stroke-dashoffset: 0;
+    }
 }
