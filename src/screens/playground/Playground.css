@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css?family=Ubuntu&display=swap');
+.Container {
+    display: flex;
+    height: 100vh;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: #54a0ff;
+}
+
+.Header {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.Current-word {
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 60px;
+    color: #ffffff;
+}
+
+.circle-background {
+    stroke: transparent;
+    background-color: transparent;
+}
+
+.circle-progress {
+    stroke: black;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+@keyframes countdown-animation {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
