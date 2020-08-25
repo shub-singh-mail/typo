@@ -1,2 +1,1 @@
-import Playground from "./Playground";
-export default Playground;
+export {default as Playground} from './Playground';

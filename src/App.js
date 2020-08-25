@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import LandingPage from "./screens/landing";
-import Playground from "./screens/playground";
+import {Playground, LandingPage} from "./screens";
 import './App.css';
 
 function App() {
 
-  let [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const playButtonPressed = () => {
     setIsPlaying(!isPlaying)

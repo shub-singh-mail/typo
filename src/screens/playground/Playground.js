@@ -50,10 +50,7 @@ const reducer = (state, action) => {
 const Playground = () => {
 
     const [state, dispatch] = useReducer(reducer, initialState)
-    const [animationName, setAnimationName] = useState('countdown-animation')
-    const [isFocused, setIsFocused] = useState(false)
-
-    const toogleFocusScreen = isWindowFocused => setIsFocused(isWindowFocused)
+    const [animationName, setAnimationName] = useState('countdown-animation') 
 
     const resetLoaderAnimation = () => {
         setAnimationName('')
@@ -87,43 +84,35 @@ const Playground = () => {
     }
 
     useEffect(() => {
-        
         document.addEventListener('keypress', wordValidator)
-        window.onblur = () => toogleFocusScreen(true)
-        window.onfocus = () => toogleFocusScreen(false)
-        document.onblur = window.onblur
-        document.onfocus = window.onfocus
-        return () => {
-            document.removeEventListener('keypress', wordValidator)
-        }
+        return () => document.removeEventListener('keypress', wordValidator)
     }, [wordValidator])
 
     return (
         <>
             {
-                isFocused ? <div><h1>YOU ARE NOT FOCUSED !! CLICK TO RESUME AGAIN</h1></div> :
-                    state.lives ?
-                        <>
-                            <div className='Header'>
-                                {getHearts()}
-                            </div>
-                            <div className="Container">
-                                <h1 className='Current-word'>{state.correct}</h1>
-                                <h1>{state.remaining}</h1>
-                                <Loader
-                                    timeInSeconds={words[state.currentLevel].length / 2}
-                                    onAnimationEnd={_onAnimationEnd}
-                                    resetCounter={animationName}
-                                    {...{
-                                        size,
-                                        radius,
-                                        strokeWidth
-                                    }}
-                                />
-                            </div>
-                        </>
-                        :
-                        <GameOver onClick={() => dispatch({ type: 'Retry' })} />
+                state.lives ?
+                    <>
+                        <div className='Header'>
+                            {getHearts()}
+                        </div>
+                        <div className="Container">
+                            <h1 className='Current-word'>{state.correct}</h1>
+                            <h1>{state.remaining}</h1>
+                            <Loader
+                                timeInSeconds={words[state.currentLevel].length / 2}
+                                onAnimationEnd={_onAnimationEnd}
+                                resetCounter={animationName}
+                                {...{
+                                    size,
+                                    radius,
+                                    strokeWidth
+                                }}
+                            />
+                        </div>
+                    </>
+                    :
+                    <GameOver onClick={() => dispatch({ type: 'Retry' })} />
             }
         </>
     )
